@@ -1,0 +1,18 @@
+.videoprev{
+    display: flex;
+    height: 400px;
+    width: 320px;
+    background-color: black;
+    justify-content: center;
+    align-items: center;
+}
+textarea{
+    width: 100%;
+    resize:none;
+}
+
+@media only screen and (min-width: 768px){
+    .videoprev{
+        width: 640px;
+    }
+}
