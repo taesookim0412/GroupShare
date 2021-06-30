@@ -1,13 +1,22 @@
 import './Upload.css'
 import {useAppDispatch, useAppSelector} from "../hooks";
-import {selectDescription, selectTitle, setDescription, setTitle} from "./uploadSlice";
+import {
+    postVideo,
+    selectAuthor,
+    selectDescription,
+    selectTitle,
+    selectVideo,
+    setDescription,
+    setTitle,
+    setVideo
+} from "./uploadSlice";
 import {ChangeEvent, Dispatch, SetStateAction, useState} from "react";
-import {log} from "util";
 
 export function Upload() {
+    const author = useAppSelector(selectAuthor)
     const title = useAppSelector(selectTitle)
     const description = useAppSelector(selectDescription)
-
+    const video = useAppSelector(selectVideo)
     const dispatch = useAppDispatch()
 
     function handleFile(e:ChangeEvent<HTMLInputElement>) {
@@ -15,15 +24,18 @@ export function Upload() {
         const file = e.target.files[0]
         const fileReader = new FileReader()
         fileReader.readAsDataURL(file)
-        fileReader.onload = () => {
-            //TODO: Upload the file with Redux and update the state with the URL.
-            console.log(fileReader.result)
-        }
+        dispatch(setVideo(file))
     }
+
+    function postRequest() {
+        dispatch(postVideo())
+
+    }
+
     return (
         <div style={{margin: "auto"}}>
             <div style={{display: "table", margin: "auto"}}>
-                <form>
+                <form onSubmit={(e) => { e.preventDefault(); postRequest()}}>
                     <label>
                         Title
                     </label><br/>
