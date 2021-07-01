@@ -1,25 +1,28 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {RootState, AppThunk} from '../../app/store';
 import axios from 'axios'
+import {useHistory} from "react-router-dom";
 
 export interface UploadState {
     author: string,
     description: string,
+    fileName: string,
     thumbnail: string,
     status: 'idle' | 'uploading' | 'successful' | 'failed'
     title: string,
     url: string,
-    video: Blob
+    video: string
 }
 
 const initialState: UploadState = {
     author: "",
     description: "",
-    thumbnail: "",
+    fileName: "",
     status: 'idle',
+    thumbnail: "",
     title: "",
     url: "",
-    video: new Blob()
+    video: "",
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -54,13 +57,16 @@ export const uploadSlice = createSlice({
         setUrl: (state, action: PayloadAction<string>) => {
             state.url = action.payload
         },
+        setFilename: (state, action: PayloadAction<string>) => {
+            state.fileName = action.payload
+        },
         setThumbnail: (state, action: PayloadAction<string>) => {
             state.thumbnail = action.payload
         },
         setStatus: (state, action: PayloadAction<'idle' | 'uploading' | 'successful' | 'failed'>) => {
             state.status = action.payload
         },
-        setVideo: (state, action: PayloadAction<Blob>) => {
+        setVideo: (state, action: PayloadAction<string>) => {
             state.video = action.payload
         },
 
@@ -79,7 +85,8 @@ export const uploadSlice = createSlice({
             formData.append("status",state.status)
             formData.append("title",state.title)
             formData.append("url",state.url)
-            formData.append("video", state.video, "videoname")
+            const video = new Blob([state.video])
+            formData.append("video", video, state.fileName)
             axios.post("/api/video", formData).then((res) => {
                 //TODO: Redirect after upload completed
             })
@@ -97,8 +104,9 @@ export const uploadSlice = createSlice({
 export const {
     setAuthor,
     setDescription,
-    setThumbnail,
+    setFilename,
     setStatus,
+    setThumbnail,
     setTitle,
     setUrl,
     setVideo,
@@ -110,8 +118,9 @@ export const {
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectAuthor = (state: RootState) => state.upload.author;
 export const selectDescription = (state: RootState) => state.upload.description;
-export const selectThumbnail = (state: RootState) => state.upload.thumbnail;
+export const selectFilename = (state: RootState) => state.upload.fileName;
 export const selectStatus = (state: RootState) => state.upload.status;
+export const selectThumbnail = (state: RootState) => state.upload.thumbnail;
 export const selectTitle = (state: RootState) => state.upload.title;
 export const selectUrl = (state: RootState) => state.upload.url;
 export const selectVideo = (state: RootState) => state.upload.video;

@@ -6,7 +6,7 @@ import {
     selectDescription,
     selectTitle,
     selectVideo,
-    setDescription,
+    setDescription, setFilename,
     setTitle,
     setVideo
 } from "./uploadSlice";
@@ -20,11 +20,15 @@ export function Upload() {
     const dispatch = useAppDispatch()
 
     function handleFile(e:ChangeEvent<HTMLInputElement>) {
-        if (e.target.files === null) return;
+        if (e.target.files === null || e.target.files.length < 1) return;
         const file = e.target.files[0]
+        if (file.type != "video/mp4") return;
         const fileReader = new FileReader()
         fileReader.readAsDataURL(file)
-        dispatch(setVideo(file))
+        fileReader.onload = () => {
+            dispatch(setVideo(fileReader.result as string))
+            dispatch(setFilename(file.name))
+        }
     }
 
     function postRequest() {
@@ -48,7 +52,7 @@ export function Upload() {
                     </label><br/>
                     <div className={"videoprev"} style={{textAlign: "end"}}>
                         {/*<input accept={"video/mp4"} type={"file"} onChange={handleFile}/>*/}
-                        <input type={"file"} onChange={handleFile}/>
+                        <input accept={"video/mp4"} type={"file"} onChange={handleFile}/>
 
                     </div>
                     <label>

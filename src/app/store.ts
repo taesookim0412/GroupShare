@@ -1,11 +1,15 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
 import uploadReducer from "./Upload/uploadSlice";
+import videosReducer from "./Videos/videosSlice";
+import oneVideoReducer from "./OneVideo/oneVideoSlice"
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
-    upload: uploadReducer
+    upload: uploadReducer,
+    videos: videosReducer,
+    oneVideo: oneVideoReducer
   },
 });
 

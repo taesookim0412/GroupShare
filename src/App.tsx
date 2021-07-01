@@ -6,6 +6,8 @@ import {SearchBar} from "./app/SearchBar/SearchBar";
 import {BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
 import {SearchResults} from "./app/SearchResults/SearchResults";
 import {Upload} from "./app/Upload/Upload";
+import {Home} from "./app/Home/Home";
+import {OneVideo} from "./app/OneVideo/OneVideo";
 
 function App() {
     return (
@@ -20,7 +22,10 @@ function App() {
                 </div>
                 <Switch>
                     <Route exact path={"/"}>
-                        Welcome Home!
+                        <Home />
+                    </Route>
+                    <Route exact path={"/watch/:id"}>
+                        <OneVideo />
                     </Route>
                     <Route path={"/results/search_query=:query"}>
                         <SearchResults/>
@@ -28,6 +33,7 @@ function App() {
                     <Route path={"/upload"}>
                         <Upload/>
                     </Route>
+
                 </Switch>
             </Router>
         </div>
