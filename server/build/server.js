@@ -1,14 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var routes_1 = require("./controllers/routes");
 var app = require('express')();
 // @ts-ignore
 var bodyparser = require('body-parser');
-var mongoose = require('mongoose');
-app.use(bodyparser.json());
+//goes before multer..
 app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.json());
+require("./configs/mongoose")();
+require("./controllers/routes")(app);
 // require("./configs/mongoose.ts")(mongoose)
-routes_1.getVideo(app);
+// getVideo(app)
 // app.get("/videos", (req, res) => {
 //     res.json({status: "Success"})
 // })

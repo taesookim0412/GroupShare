@@ -13,7 +13,9 @@ export function OneVideo(){
     const oneVideo = useAppSelector(getVideo)
     const params:idParams = useParams()
     useEffect(() => {
-        if (oneVideo.length === 0){
+        //TODO: (SEVERE) ["data:"] Video object in initial state
+        // @ts-ignore
+        if (oneVideo.length === 0 || oneVideo[0] === "data:"){
             dispatch(getOneVideoFromApiAsync(params.id))
         }
     }, [])

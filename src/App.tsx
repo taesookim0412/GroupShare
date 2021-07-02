@@ -8,8 +8,12 @@ import {SearchResults} from "./app/SearchResults/SearchResults";
 import {Upload} from "./app/Upload/Upload";
 import {Home} from "./app/Home/Home";
 import {OneVideo} from "./app/OneVideo/OneVideo";
+import {Login} from "./app/LoginReg/Login/LoginReg";
+import {selectLoggedIn} from "./app/LoginReg/Login/loginSlice";
+import {useAppSelector} from "./app/hooks";
 
 function App() {
+
     return (
         <div className="App">
             <Router>
@@ -17,7 +21,10 @@ function App() {
                     <div style={{display: "flex", justifyContent:"space-between"}}>
                         <Link style={{display: "inline-block", padding:"0 15px 0 15px"}} to={"/"}>Home</Link>
                         <SearchBar />
+                        <div>
+                            <Link style={{display: "inline-block", padding:"0 15px 0 15px"}} to={"/login"}>{ useAppSelector(selectLoggedIn) ?  "Switch User" : "Login"}</Link>
                         <Link style={{display: "inline-block", padding:"0 15px 0 15px"}} to={"/upload"}>Upload</Link>
+                        </div>
                     </div>
                 </div>
                 <Switch>
@@ -29,6 +36,9 @@ function App() {
                     </Route>
                     <Route path={"/results/search_query=:query"}>
                         <SearchResults/>
+                    </Route>
+                    <Route path={"/login"}>
+                        <Login/>
                     </Route>
                     <Route path={"/upload"}>
                         <Upload/>
