@@ -1,6 +1,7 @@
 export interface Video{
     _id: string,
     author:string,
+    date: string,
     description:string,
     likes: number,
     src:string,

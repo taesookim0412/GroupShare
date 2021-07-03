@@ -1,0 +1,40 @@
+#home {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-gap: 15px;
+  #allvideos {
+    #sidebar{
+      grid-column-end: 2;
+    }
+    grid-column-start: 2;
+    grid-column-end: span 7;
+    .video {
+      padding: 20px 0 20px 0;
+      display: inline-block;
+
+      img {
+        height: 200px;
+        max-width: 98%;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 420px){
+  #sidebar{
+    display: none;
+    grid-column-end: 0;
+  }
+}
+@media only screen and (max-width: 720px) {
+  #home{
+    #allvideos{
+      .video{
+        img {
+          height: auto;
+          width: 100%;
+        }
+      }
+    }
+  }
+}

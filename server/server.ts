@@ -1,10 +1,13 @@
 import express = require('express')
+import path = require('path')
 const app:express.Application = require('express')()
 // @ts-ignore
 const bodyparser = require('body-parser')
 //goes before multer..
 app.use(bodyparser.urlencoded({extended: true}))
 app.use(bodyparser.json())
+
+app.use(express.static(path.join(__dirname, "..", "build")))
 
 require("./configs/mongoose")()
 require("./controllers/routes")(app)

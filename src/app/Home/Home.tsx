@@ -5,6 +5,7 @@ import {PayloadAction} from "@reduxjs/toolkit";
 import {useEffect} from "react";
 import {useHistory} from "react-router-dom";
 import {setVideo} from "../OneVideo/oneVideoSlice";
+import "./Home.scss"
 
 export function Home() {
     const dispatch = useAppDispatch()
@@ -16,29 +17,31 @@ export function Home() {
         //Shows the format for videos
     }, [])
 
-    function onClickVideo(id:string, i:number){
-        dispatch(setVideo(allVideos[i]))
+    function onClickVideo(id: string) {
         history.push(`/watch/${id}`)
     }
 
-    let i = -1;
     const rows = allVideos.map((video) => {
-        i += 1
         return (
-            <li style={{padding: "20px 0px 20px 0px"}} onClick={() => onClickVideo(video._id, i)}>
-                {/*<img src={video.thumbnail}/>*/}<img src={"https://getuikit.com/v2/docs/images/placeholder_600x400.svg"}/>
-                {video.title} <br/>
-                {/*{video.author}*/} AuthorName
-                {video.views} Views
-            </li>
+            <div className={"video"} onClick={() => onClickVideo(video._id)}>
+                {/*<img src={video.thumbnail}/>*/}<img
+                src={"https://getuikit.com/v2/docs/images/placeholder_600x400.svg"}/>
+                <div>
+                    {video.title} <br/>
+                    {video.author} <br/>
+                    {video.views} <br/>
+                </div>
+            </div>
         )
     })
     return (
-        <div style={{display: "table", margin: "auto"}}>
-            <ul>
+        <div id={"home"}>
+            <div id={"sidebar"}>
+
+            </div>
+            <div id={"allvideos"}>
                 {rows}
-            </ul>
-            Welcome home!
+            </div>
         </div>
     )
 }

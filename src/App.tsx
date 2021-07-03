@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import {Counter} from './features/counter/Counter';
-import './App.css';
+import './App.scss';
 import {SearchBar} from "./app/SearchBar/SearchBar";
 import {BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
 import {SearchResults} from "./app/SearchResults/SearchResults";
@@ -15,24 +15,27 @@ import {useAppSelector} from "./app/hooks";
 function App() {
 
     return (
-        <div className="App">
+        <div id={"App"}>
             <Router>
-                <div>
-                    <div style={{display: "flex", justifyContent:"space-between"}}>
-                        <Link style={{display: "inline-block", padding:"0 15px 0 15px"}} to={"/"}>Home</Link>
-                        <SearchBar />
-                        <div>
-                            <Link style={{display: "inline-block", padding:"0 15px 0 15px"}} to={"/login"}>{ useAppSelector(selectLoggedIn) ?  "Switch User" : "Login"}</Link>
-                        <Link style={{display: "inline-block", padding:"0 15px 0 15px"}} to={"/upload"}>Upload</Link>
-                        </div>
+                <div id={"header"}>
+                    <Link style={{display: "inline-block"}} to={"/"}><p
+                        id={"logo"}>GroupShare</p></Link>
+                    <div style={{textAlign: "center", paddingTop: "7px"}}>
+                        <SearchBar/>
+                    </div>
+                    <div style={{paddingTop: "5px"}}>
+                        <Link style={{display: "inline-block", padding: "0 15px 0 15px"}}
+                              to={"/login"}>{useAppSelector(selectLoggedIn) ? "Switch User" : "Login"}</Link>
+                        <Link style={{display: "inline-block", padding: "0 15px 0 15px"}}
+                              to={"/upload"}>Upload</Link>
                     </div>
                 </div>
                 <Switch>
                     <Route exact path={"/"}>
-                        <Home />
+                        <Home/>
                     </Route>
                     <Route exact path={"/watch/:id"}>
-                        <OneVideo />
+                        <OneVideo/>
                     </Route>
                     <Route path={"/results/search_query=:query"}>
                         <SearchResults/>
@@ -47,7 +50,8 @@ function App() {
                 </Switch>
             </Router>
         </div>
-    );
+    )
+
 }
 
 export default App;

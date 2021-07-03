@@ -27,9 +27,19 @@ const initialState: LoginState = {
         username: "",
         password: ""
     },
-    loggedIn: (!!localStorage.username || !!document.cookie),
+    loggedIn: checkIfLoggedIn(),
     token: (!!localStorage.username || !!document.cookie) ? document.cookie : ""
 };
+
+function checkIfLoggedIn() {
+    if (localStorage.expiresAt === undefined || localStorage.expiresAt < Date.now()) {
+        document.cookie = ""
+        return false
+    } else {
+        return true;
+    }
+
+}
 
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
@@ -38,7 +48,7 @@ const initialState: LoginState = {
 // typically used to make async requests.
 export const loginFromApiAsync = createAsyncThunk(
     'login/loginFromApi',
-    async (state:LoginState) => {
+    async (state: LoginState) => {
         const response = await loginFromApi(state.username, state.password);
         // // The value we return becomes the `fulfilled` action payload
         return response.data;
@@ -65,7 +75,7 @@ export const loginSlice = createSlice({
         setLoggedIn: (state, param: PayloadAction<boolean>) => {
             state.loggedIn = param.payload
         },
-        setToken: (state, param:PayloadAction<string>) => {
+        setToken: (state, param: PayloadAction<string>) => {
             state.token = param.payload
         }
 

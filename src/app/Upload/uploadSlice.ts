@@ -10,7 +10,6 @@ export interface UploadState {
     author: string,
     description: string,
     fileName: string,
-    forward: string,
     thumbnail: string,
     status: 'idle' | 'uploading' | 'successful' | 'failed'
     title: string,
@@ -22,7 +21,6 @@ const initialState: UploadState = {
     author: "",
     description: "",
     fileName: "",
-    forward: "",
     status: 'idle',
     thumbnail: "",
     title: "",
@@ -58,6 +56,9 @@ export const postVideo = createAsyncThunk(
         }).then((res) => {
             if (res.data.status === "successful") {
                 history.push(`watch/${res.data.video._id}`)
+            }
+            else{
+                history.push('/login')
             }
         })
     })

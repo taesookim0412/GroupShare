@@ -1,0 +1,23 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+
+  #sidebar {
+    grid-column-end: 2;
+  }
+
+  #searchrows {
+    grid-column-start: 2;
+    grid-column-end: span 3;
+      .searchrow{
+          display:flex;
+          img{
+              height:200px;
+              max-width: 100%;
+          }
+          .videoinfo{
+          }
+      }
+  }
+
+}

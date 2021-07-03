@@ -18,11 +18,14 @@ export function postVideo(req:express.Request, res:express.Response) {
         if (req.file === undefined) { return res.json(createFailed())}
         const videoPost = {
             author: req.body.author,
+            date: Date.now(),
             description: req.body.description,
+            likes: 0,
             // @ts-ignore
             src: req.file['location'],
             thumbnail: "",
-            title: req.body.title
+            title: req.body.title,
+            views: 0,
             //TODO: url encoder or index by id
             //TODO: Add thumbnail functionality
         }

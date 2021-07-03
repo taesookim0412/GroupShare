@@ -58,11 +58,12 @@ export function Login() {
                 //jwt here
                 localStorage.setItem("username", res.payload.username)
                 localStorage.setItem("token", res.payload.token)
-                localStorage.setItem("expiresIn", res.payload.expiresIn)
+                localStorage.setItem("expiresAt", Date.now() + res.payload.expiresIn)
                 //TODO: (SEVERE) HTTP COOKIE
                 document.cookie = res.payload.token
                 dispatch(setLoggedIn(true))
                 dispatch(setToken(res.payload.token))
+                history.push("/")
             }
             else if (res.payload.status === "wrong_password"){
                 dispatch(setPasswordError("Incorrect Password!"))
