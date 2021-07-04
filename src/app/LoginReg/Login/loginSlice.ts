@@ -21,8 +21,8 @@ export interface LoginState {
 
 const initialState: LoginState = {
     status: "",
-    username: "",
-    password: "",
+    username: "user",
+    password: "pass",
     errors: {
         username: "",
         password: ""

@@ -20,7 +20,7 @@ export interface UploadState {
 const initialState: UploadState = {
     author: "",
     description: "",
-    fileName: "",
+    fileName: "Upload",
     status: 'idle',
     thumbnail: "",
     title: "",
@@ -46,8 +46,8 @@ export const postVideo = createAsyncThunk(
         formData.append("status", state.status)
         formData.append("title", state.title)
         formData.append("url", state.url)
-        const video = new Blob([state.video])
-        formData.append("video", video, state.fileName)
+        const blob = b64toBlob(state.video)
+        formData.append("video", blob, state.fileName)
         axios.post("/api/video", formData, {
             headers: {
                 'token': token,
@@ -55,13 +55,28 @@ export const postVideo = createAsyncThunk(
             }
         }).then((res) => {
             if (res.data.status === "successful") {
-                history.push(`watch/${res.data.video._id}`)
-            }
-            else{
+                // File is not uploaded synchronously
+                // TODO: Query the upload until it is available..
+                // history.push(`watch/${res.data.video._id}`)
+                history.push(`/`)
+            } else {
                 history.push('/login')
             }
         })
-    })
+    }
+)
+
+function b64toBlob(dataURI: string) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], {type: 'video/mp4'});
+}
+
 export const uploadSlice = createSlice({
     name: 'upload',
     initialState,

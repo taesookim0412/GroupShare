@@ -33,8 +33,9 @@ export function OneVideo() {
     return (
         <div id={"container"}>
             <div id={"onevideocontainer"}>
-                <div id={"video"}>
-                </div>
+                <video id={"video"} controls>
+                    <source src={oneVideo[0].src} type={"video/mp4"}/>
+                </video>
                 <div id={"title"}>{oneVideo[0].title}</div>
                 <div id={"description"}><span
                     style={{paddingRight: "25px"}}>{oneVideo[0].views} views</span>{new Date(oneVideo[0].date).toDateString()}

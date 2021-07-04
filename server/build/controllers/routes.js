@@ -15,10 +15,12 @@ var Success_1 = require("../configs/global/Objects/Success");
 var uploads = require("./uploads");
 var accounts = require('./accounts');
 var mongoose = require("mongoose");
+var parse = require("url").parse;
 var videos = mongoose.model("videos");
+var jwt = require("./../configs/jwt");
 module.exports = function (app) {
     app.get("/api/video/all", function (req, res) {
-        videos.find({}, function (err, data) {
+        videos.find({}, '-src').sort({ _id: -1 }).then(function (data) {
             res.json(__assign(__assign({}, Success_1.createSuccessful()), { videos: data }));
         });
     });
@@ -28,8 +30,20 @@ module.exports = function (app) {
             res.json(__assign(__assign({}, Success_1.createSuccessful()), { videos: data }));
         });
     });
+    app.get("/api/video/search/:params", function (req, res) {
+        //Only searches for one word
+        var query = decodeURIComponent(req.params.params).split(" ")[0];
+        videos.find({ "title": { "$regex": "" + query, "$options": "i" } }, function (err, data) {
+            res.json(__assign(__assign({}, Success_1.createSuccessful()), { videos: data }));
+        });
+    });
     app.post("/api/video", function (req, res) {
-        uploads.postVideo(req, res);
+        if (jwt.verify(req.headers.token, req.headers.author) !== false) {
+            uploads.postVideo(req, res);
+        }
+        else {
+            res.json(Success_1.createFailed());
+        }
     });
     app.post("/api/login/create", function (req, res) {
         accounts.create(req, res);

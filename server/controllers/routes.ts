@@ -12,9 +12,8 @@ const jwt = require("./../configs/jwt")
 
 module.exports = (app: express.Application) => {
     app.get("/api/video/all", (req: express.Request, res: express.Response) => {
-        videos.find({}, '-src', null, (err, data) => {
-            res.json({...createSuccessful(), videos: data})
-        })
+        videos.find({}, '-src').sort({_id: -1}).then((data) => {
+        res.json({...createSuccessful(), videos: data})})
     })
     // /api/video/one/${id}
     app.get("/api/video/one/:id", (req: express.Request, res: express.Response) => {

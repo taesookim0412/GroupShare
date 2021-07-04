@@ -29,7 +29,7 @@ export function Home() {
                 <div>
                     {video.title} <br/>
                     {video.author} <br/>
-                    {video.views} <br/>
+                    {video.views} views <br/>
                 </div>
             </div>
         )
