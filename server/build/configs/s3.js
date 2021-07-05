@@ -2,7 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var aws = require("aws-sdk");
 var multerS3 = require('multer-s3');
-var s3 = new aws.S3({ credentials: new aws.SharedIniFileCredentials({ profile: 'groupshare' }) });
+// const s3 = new aws.S3({ credentials: new aws.SharedIniFileCredentials({ profile: 'groupshare' })});
+var s3 = new aws.S3();
 //TODO: Interface File
 module.exports = {
     video: multerS3({

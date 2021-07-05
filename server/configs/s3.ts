@@ -1,6 +1,8 @@
 import aws = require('aws-sdk');
 const multerS3 = require('multer-s3');
-const s3 = new aws.S3({ credentials: new aws.SharedIniFileCredentials({ profile: 'groupshare' })});
+// const s3 = new aws.S3({ credentials: new aws.SharedIniFileCredentials({ profile: 'groupshare' })});
+const s3 = new aws.S3();
+
 import express = require('express')
 
 //TODO: Interface File

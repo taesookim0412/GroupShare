@@ -11,6 +11,8 @@ var S3VideoUpload = multer({ storage: s3conf.video }).single('video');
 //TODO: Add type def for req.file
 function postVideo(req, res) {
     S3VideoUpload(req, res, function (err) {
+        if (err)
+            console.log(err);
         // @ts-ignore
         if (req.file === undefined) {
             return res.json(Success_1.createFailed());

@@ -4,13 +4,17 @@ import axios from 'axios'
 import {useHistory} from "react-router-dom";
 import {loginFromApi} from "../LoginReg/Login/loginApi";
 import {LoginState} from "../LoginReg/Login/loginSlice";
+import {b64toBlob} from "./UploadHelpers";
 
 
 export interface UploadState {
     author: string,
     description: string,
     fileName: string,
-    thumbnail: string,
+    thumbnailGifsIndex: string,
+    thumbnailGifs: string[],
+    thumbnailPngsIndex: string,
+    thumbnailPngs: string[],
     status: 'idle' | 'uploading' | 'successful' | 'failed'
     title: string,
     url: string,
@@ -22,7 +26,10 @@ const initialState: UploadState = {
     description: "",
     fileName: "Upload",
     status: 'idle',
-    thumbnail: "",
+    thumbnailGifsIndex: "0",
+    thumbnailGifs: ["","","",""],
+    thumbnailPngsIndex: "",
+    thumbnailPngs: ["","","",""],
     title: "",
     url: "",
     video: "",
@@ -42,7 +49,7 @@ export const postVideo = createAsyncThunk(
         const formData = new FormData()
         formData.append("author", localStorage.username)
         formData.append("description", state.description)
-        formData.append("thumbnail", state.thumbnail)
+        formData.append("thumbnail", state.thumbnailGifs[state.thumbnailGifsIndex as unknown as number])
         formData.append("status", state.status)
         formData.append("title", state.title)
         formData.append("url", state.url)
@@ -66,16 +73,7 @@ export const postVideo = createAsyncThunk(
     }
 )
 
-function b64toBlob(dataURI: string) {
-    var byteString = atob(dataURI.split(',')[1]);
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
 
-    for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], {type: 'video/mp4'});
-}
 
 export const uploadSlice = createSlice({
     name: 'upload',
@@ -98,8 +96,17 @@ export const uploadSlice = createSlice({
         setFilename: (state, action: PayloadAction<string>) => {
             state.fileName = action.payload
         },
-        setThumbnail: (state, action: PayloadAction<string>) => {
-            state.thumbnail = action.payload
+        setThumbnailGifsIndex: (state, action: PayloadAction<string>) => {
+            state.thumbnailGifsIndex = action.payload
+        },
+        setThumbnailGifs: (state, action: PayloadAction<string[]>) => {
+            state.thumbnailGifs = action.payload
+        },
+        setThumbnailPngsIndex: (state, action: PayloadAction<string>) => {
+            state.thumbnailPngsIndex = action.payload
+        },
+        setThumbnailPngs: (state, action: PayloadAction<string[]>) => {
+            state.thumbnailPngs = action.payload
         },
         setStatus: (state, action: PayloadAction<'idle' | 'uploading' | 'successful' | 'failed'>) => {
             state.status = action.payload
@@ -115,7 +122,10 @@ export const {
     setDescription,
     setFilename,
     setStatus,
-    setThumbnail,
+    setThumbnailGifsIndex,
+    setThumbnailGifs,
+    setThumbnailPngsIndex,
+    setThumbnailPngs,
     setTitle,
     setUrl,
     setVideo,
@@ -128,7 +138,10 @@ export const selectAuthor = (state: RootState) => state.upload.author;
 export const selectDescription = (state: RootState) => state.upload.description;
 export const selectFilename = (state: RootState) => state.upload.fileName;
 export const selectStatus = (state: RootState) => state.upload.status;
-export const selectThumbnail = (state: RootState) => state.upload.thumbnail;
+export const selectThumbnailGifsIndex = (state: RootState) => state.upload.thumbnailGifsIndex;
+export const selectThumbnailGifs = (state: RootState) => state.upload.thumbnailGifs;
+export const selectThumbnailPngsIndex = (state: RootState) => state.upload.thumbnailPngsIndex;
+export const selectThumbnailPngs = (state: RootState) => state.upload.thumbnailPngs;
 export const selectTitle = (state: RootState) => state.upload.title;
 export const selectUploadState = (state: RootState) => state.upload;
 export const selectUrl = (state: RootState) => state.upload.url;

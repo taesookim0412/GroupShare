@@ -13,6 +13,7 @@ const S3VideoUpload = multer({storage: s3conf.video}).single('video')
 //TODO: Add type def for req.file
 export function postVideo(req:express.Request, res:express.Response) {
     S3VideoUpload(req, res, (err: mongoose.CallbackError) => {
+        if (err) console.log(err)
         // @ts-ignore
         if (req.file === undefined) { return res.json(createFailed())}
         const videoPost = {
