@@ -32,6 +32,7 @@ app.use(express.static(getMainDirectory("build")))
 app.use(express.static(getMainDirectory("assets")))
 const indexpath = path.resolve(path.join(getMainDirectory("build"), "index.html"))
 // TODO: Fix Routing
+
 // app.get("*", (req, res) => res.sendFile(indexpath))
 getMainDirectory = () => ""
 
