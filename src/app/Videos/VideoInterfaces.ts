@@ -5,7 +5,8 @@ export interface Video{
     description:string,
     likes: number,
     src:string,
-    thumbnail:string,
+    thumbnailGif:string,
+    thumbnailPng:string,
     title:string,
     url:string,
     views:number

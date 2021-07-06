@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, PayloadAction, ThunkDispatch} from '@reduxjs/toolkit';
 import {RootState, AppThunk} from '../../app/store';
 import axios from 'axios'
 import {useHistory} from "react-router-dom";
@@ -11,6 +11,7 @@ export interface UploadState {
     author: string,
     description: string,
     fileName: string,
+    gifsVisibility: string,
     thumbnailGifsIndex: string,
     thumbnailGifs: string[],
     thumbnailPngsIndex: string,
@@ -26,9 +27,10 @@ const initialState: UploadState = {
     description: "",
     fileName: "Upload",
     status: 'idle',
+    gifsVisibility: "",
     thumbnailGifsIndex: "0",
     thumbnailGifs: ["","","",""],
-    thumbnailPngsIndex: "",
+    thumbnailPngsIndex: "0",
     thumbnailPngs: ["","","",""],
     title: "",
     url: "",
@@ -38,29 +40,44 @@ const initialState: UploadState = {
 interface postRequestData {
     state: UploadState,
     token: string,
-    history: any
+    history: any,
+    dispatch: ThunkDispatch<any, any, any>
 }
-
+//files : [gifs, pngs, video]
 export const postVideo = createAsyncThunk(
     'upload/postVideo',
     async (data: postRequestData) => {
         const {state, token, history} = data
-        if (state.video === "") return;
+        if (state.video === "") {
+            return;
+        }
+        //this breaks
+        data.dispatch(setStatus("uploading"))
+
         const formData = new FormData()
+        console.log("1111")
         formData.append("author", localStorage.username)
         formData.append("description", state.description)
-        formData.append("thumbnail", state.thumbnailGifs[state.thumbnailGifsIndex as unknown as number])
+        console.log("2222")
+        const fileReader_thumbGif = await fetch(state.thumbnailGifs[state.thumbnailGifsIndex as unknown as number]).then(r => r.blob());
+        const fileReader_thumbPng = await fetch(state.thumbnailPngs[state.thumbnailPngsIndex as unknown as number]).then(r => r.blob());
+        formData.append("files", fileReader_thumbGif, `${state.fileName}.gif`)
+        formData.append("files", fileReader_thumbPng, `${state.fileName}.png`)
+        console.log("33333")
         formData.append("status", state.status)
         formData.append("title", state.title)
         formData.append("url", state.url)
         const blob = b64toBlob(state.video)
-        formData.append("video", blob, state.fileName)
+        formData.append("files", blob, state.fileName)
+        console.log(formData)
+        console.log("4444")
         axios.post("/api/video", formData, {
             headers: {
                 'token': token,
                 'author': localStorage.username
             }
         }).then((res) => {
+            data.dispatch(setStatus("idle"))
             if (res.data.status === "successful") {
                 // File is not uploaded synchronously
                 // TODO: Query the upload until it is available..
@@ -96,6 +113,9 @@ export const uploadSlice = createSlice({
         setFilename: (state, action: PayloadAction<string>) => {
             state.fileName = action.payload
         },
+        setGifsVisibility: (state, action: PayloadAction<string>) => {
+            state.gifsVisibility = action.payload
+        },
         setThumbnailGifsIndex: (state, action: PayloadAction<string>) => {
             state.thumbnailGifsIndex = action.payload
         },
@@ -121,6 +141,7 @@ export const {
     setAuthor,
     setDescription,
     setFilename,
+    setGifsVisibility,
     setStatus,
     setThumbnailGifsIndex,
     setThumbnailGifs,
@@ -137,6 +158,7 @@ export const {
 export const selectAuthor = (state: RootState) => state.upload.author;
 export const selectDescription = (state: RootState) => state.upload.description;
 export const selectFilename = (state: RootState) => state.upload.fileName;
+export const selectGifsVisiblity = (state: RootState) => state.upload.gifsVisibility;
 export const selectStatus = (state: RootState) => state.upload.status;
 export const selectThumbnailGifsIndex = (state: RootState) => state.upload.thumbnailGifsIndex;
 export const selectThumbnailGifs = (state: RootState) => state.upload.thumbnailGifs;

@@ -12,6 +12,8 @@ import {Login} from "./app/LoginReg/Login/LoginReg";
 import {selectLoggedIn} from "./app/LoginReg/Login/loginSlice";
 import {useAppSelector} from "./app/hooks";
 
+import "./fonts.scss";
+
 function App() {
 
     return (

@@ -5,6 +5,7 @@ import path = require('path')
 import axios from "axios";
 import {createWriteStream} from "fs";
 import {createFailed, createSuccessful} from "./configs/global/Objects/Success";
+import {log} from "util";
 // const multer = require('multer');
 // const multerS3 = require('multer-s3');
 // const aws = require('aws-sdk');
@@ -29,6 +30,9 @@ let getMainDirectory = (folderName: string) => {
 }
 app.use(express.static(getMainDirectory("build")))
 app.use(express.static(getMainDirectory("assets")))
+const indexpath = path.resolve(path.join(getMainDirectory("build"), "index.html"))
+// TODO: Fix Routing
+// app.get("*", (req, res) => res.sendFile(indexpath))
 getMainDirectory = () => ""
 
 require("./configs/mongoose")()

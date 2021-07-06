@@ -8,7 +8,8 @@ module.exports = function () {
         description: { type: String },
         likes: { type: Number },
         src: { type: String },
-        thumbnail: { type: String },
+        thumbnailGif: { type: String },
+        thumbnailPng: { type: String },
         title: { type: String },
         views: { type: Number }
     });

@@ -4,7 +4,8 @@ import {
     postVideo,
     selectAuthor,
     selectDescription,
-    selectFilename,
+    selectFilename, selectGifsVisiblity,
+    selectStatus,
     selectThumbnailGifs,
     selectThumbnailGifsIndex,
     selectThumbnailPngs,
@@ -13,7 +14,13 @@ import {
     selectUploadState,
     selectVideo,
     setDescription,
-    setFilename, setThumbnailGifs, setThumbnailPngs,
+    setFilename,
+    setGifsVisibility,
+    setStatus,
+    setThumbnailGifs,
+    setThumbnailGifsIndex,
+    setThumbnailPngs,
+    setThumbnailPngsIndex,
     setTitle,
     setVideo
 } from "./uploadSlice";
@@ -24,7 +31,7 @@ import "./Upload.scss"
 import {createFFmpeg, fetchFile} from "@ffmpeg/ffmpeg";
 import axios from "axios";
 
-const ffmpeg = createFFmpeg({log: true});
+const ffmpeg = createFFmpeg({log: false});
 
 
 export function Upload() {
@@ -34,11 +41,14 @@ export function Upload() {
     const fileName = useAppSelector(selectFilename)
     const video = useAppSelector(selectVideo)
     const token = useAppSelector(selectToken)
+    const gifsVisibility = useAppSelector(selectGifsVisiblity)
     const thumbnailGifsIndex = useAppSelector(selectThumbnailGifsIndex)
     const thumbnailGifs = useAppSelector(selectThumbnailGifs)
     const thumbnailPngsIndex = useAppSelector(selectThumbnailPngsIndex)
     const thumbnailPngs = useAppSelector(selectThumbnailPngs)
+    const status = useAppSelector(selectStatus)
     const state = useAppSelector(selectUploadState)
+
     const dispatch = useAppDispatch()
     const history = useHistory()
     const loggedIn = useAppSelector(selectLoggedIn)
@@ -50,6 +60,7 @@ export function Upload() {
         if (e.target.files === null || e.target.files.length < 1) return;
         const file = e.target.files[0]
         if (!(file.type.startsWith("video"))) return;
+        dispatch(setStatus("uploading"))
         const videoElement = document.createElement("video")
         videoElement.addEventListener("loadeddata", () => {
             convertToGif(file, videoElement.duration)
@@ -82,7 +93,8 @@ export function Upload() {
 
     }
 
-    async function handleTestFile(file:string) {
+    async function handleTestFile(file: string) {
+        dispatch(setStatus("uploading"))
         const videoElement = document.createElement("video")
         videoElement.addEventListener("loadeddata", () => {
             convertToGif(file, videoElement.duration)
@@ -90,7 +102,9 @@ export function Upload() {
         videoElement.src = file
         videoElement.load()
         dispatch(setVideo(file))
+
         dispatch(setFilename("Test file.webm"))
+
     }
 
     //One pass for pictures, gif is either multi pass or can't find skip frames for gif fps
@@ -104,18 +118,24 @@ export function Upload() {
         const interval = duration / (num_gifs + 1)
         const fps_str = `fps=1/${interval}`
         await ffmpeg.run('-i', 'video.mp4', '-vf', fps_str, '%d.png')
+        //0
+
+        //10.8
         pngs[0] = ffmpeg.FS('readFile', '1.png')
+        //21.6
         pngs[1] = ffmpeg.FS('readFile', '2.png')
+        //32.4
         pngs[2] = ffmpeg.FS('readFile', '3.png')
+        //44
         pngs[3] = ffmpeg.FS('readFile', '4.png')
-        const start_strs = []
+        //56
+
         // //4.5s - 5.5s
         for (let i = 0; i < num_gifs; i++) {
             const midpoint = duration / (num_gifs + 1) * (i + 1)
             const start_int = Math.max(0, midpoint - 0.5);
             const end_int = Math.min(duration, midpoint + 0.5)
             const start_str = start_int.toString()
-            start_strs.push(start_str)
             const gif_name = `${i}.gif`
             if (start_int + 1 < duration)
                 await ffmpeg.run('-i', 'video.mp4', '-t', '1', '-ss', start_str, '-f', 'gif', gif_name)
@@ -123,12 +143,6 @@ export function Upload() {
                 await ffmpeg.run('-i', 'video.mp4', '-t', (duration - end_int).toString(), '-ss', start_str, '-f', 'gif', gif_name)
             gifs[i] = ffmpeg.FS('readFile', gif_name)
         }
-        //Multi seek method from one line (4s - 6.5s) (Slower)
-        // await ffmpeg.run('-i', 'video.mp4', '-ss', start_strs[0], '-t', '1', '1.gif',
-        //     '-ss', start_strs[1], '-t', '1', '2.gif',
-        //     '-ss', start_strs[2], '-t', '1', '3.gif',
-        //     '-ss', start_strs[3], '-t', '1', '4.gif')
-
         // TODO: Combine binary data.
         // Create a URL
         const gif_0 = URL.createObjectURL(new Blob([gifs[0].buffer], {type: 'image/gif'}));
@@ -143,19 +157,25 @@ export function Upload() {
         // dispatch(setThumbnailGifs([gif_0, gif_1, gif_2, gif_3]))
         dispatch(setThumbnailGifs([gif_0, gif_1, gif_2, gif_3]))
         dispatch(setThumbnailPngs([png_0, png_1, png_2, png_3]))
+        dispatch(setStatus("idle"))
     }
 
     function postRequest() {
         dispatch(postVideo({
             state: state,
             token: token,
-            history: history
+            history: history,
+            dispatch: dispatch
         }))
 
     }
 
     let videoUploadDiv = <div id={"preview--header"}>
         <div>Preview</div>
+        <div>
+            <button onClick={() => {dispatch(setGifsVisibility('1'))}} >Show</button>
+            <button onClick={() => {dispatch(setGifsVisibility('0'))}} >Hide</button>
+        </div>
         <input type={"file"} accept={"video/*"} onChange={handleFile}/>
     </div>
     if (video === "") {
@@ -172,6 +192,12 @@ export function Upload() {
         )
     }
 
+    function onClickThumbnail(target: EventTarget, idx: string) {
+        dispatch(setThumbnailPngsIndex(idx));
+
+
+    }
+
     return (
         <form onSubmit={(e) => {
             e.preventDefault();
@@ -180,7 +206,7 @@ export function Upload() {
             <div id={"form-container"}>
                 <div id="side-spacer-left">
                 </div>
-                <div id={"inputs"}>
+                <div id={"inputs"} className={"inputs"}>
                     <label id={"title"}>
                         Title<br/>
                         <textarea value={title} onChange={(e) => {
@@ -202,10 +228,10 @@ export function Upload() {
                         Thumbnail<br/>
                         <div id="thumbnail-box-area">
                             <div className={"thumbnail-section"}>
-                                <img style={{opacity: "{}"}} src={thumbnailPngs[0]} className={"thumbnail-box"}/>
-                                <img src={thumbnailPngs[1]} className={"thumbnail-box"}/>
-                                <img src={thumbnailPngs[2]} className={"thumbnail-box"}/>
-                                <img src={thumbnailPngs[3]} className={"thumbnail-box"}/>
+                                <img src={thumbnailPngs[0]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailPngsIndex('0'))} style={{opacity: thumbnailPngsIndex === '0' ? '1' : '0.25'}}/>
+                                <img src={thumbnailPngs[1]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailPngsIndex('1'))} style={{opacity: thumbnailPngsIndex === '1' ? '1' : '0.25'}}/>
+                                <img src={thumbnailPngs[2]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailPngsIndex('2'))} style={{opacity: thumbnailPngsIndex === '2' ? '1' : '0.25'}}/>
+                                <img src={thumbnailPngs[3]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailPngsIndex('3'))} style={{opacity: thumbnailPngsIndex === '3' ? '1' : '0.25'}}/>
                             </div>
                         </div>
                     </label>
@@ -216,12 +242,24 @@ export function Upload() {
                     </div>
                 </div>
                 <div id="video-right">
-                    {videoUploadDiv}
-                    <div className={"thumbnail-section"}>
-                        <img src={thumbnailGifs[0]} className={"thumbnail-box"}/>
-                        <img src={thumbnailGifs[1]} className={"thumbnail-box"}/>
-                        <img src={thumbnailGifs[2]} className={"thumbnail-box"}/>
-                        <img src={thumbnailGifs[3]} className={"thumbnail-box"}/>
+                    {/*correct*/}
+                    <div id={"video-right--dialog"}
+                         style={{display: status === "uploading" ? "block" : "none", opacity: "uploading" ? '1' : '0'}}>
+                    {/*testing*/}
+                    {/*<div id={"video-right--dialog"}*/}
+                    {/*     style={{display: status === "idle" ? "block" : "none", opacity: "idle" ? 1 : 0}}>*/}
+                        <h3 style={{paddingTop: "15px"}}>Loading</h3>
+                        <hr/>
+                        <h5>This may take several seconds.</h5>
+                    </div>
+                    <div id={"video-right--content"} style={{opacity: status === "idle" ? '1' : '0'}}>
+                        {videoUploadDiv}
+                        <div className={"thumbnail-section"} style={{opacity: gifsVisibility, pointerEvents: gifsVisibility === '0' ? 'none': 'unset'}}>
+                            <img src={thumbnailGifs[0]} className={"thumbnail-box"}  onClick={() => dispatch(setThumbnailGifsIndex('0'))} style={{opacity: thumbnailGifsIndex === '0' ? '1' : status === 'idle' ? 0.25 : 0}}/>
+                            <img src={thumbnailGifs[1]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailGifsIndex('1'))} style={{opacity: thumbnailGifsIndex === '1' ? '1' : status === 'idle' ? 0.25 : 0}}/>
+                            <img src={thumbnailGifs[2]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailGifsIndex('2'))} style={{opacity: thumbnailGifsIndex === '2' ? '1' : status === 'idle' ? 0.25 : 0}}/>
+                            <img src={thumbnailGifs[3]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailGifsIndex('3'))} style={{opacity: thumbnailGifsIndex === '3' ? '1' : status === 'idle' ? 0.25 : 0}}/>
+                        </div>
                     </div>
                 </div>
                 <div id="side-spacer-right">

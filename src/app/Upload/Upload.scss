@@ -3,11 +3,18 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
 
-  #inputs {
+  .inputs {
     background-color: var(--form-color);
     grid-column-start: 3;
     grid-column-end: 5;
+    max-width: 100%;
     padding: 25px 25px;
+    //transition: all .5s linear;
+  }
+  .inputs:hover{
+    grid-column-end: 8;
+    max-width: 100%;
+  }
     #title {
       height: 40px;
     }
@@ -32,9 +39,37 @@
   }
 
   #video-right {
-    padding: 25px 25px;
+    position:relative;
     grid-column-end: span 3;
     background-color: var(--form-color);
+    #video-right--dialog{
+      z-index: 10;
+      position: absolute;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+      font-size: 2em;
+      background-color: #ffffff;
+      justify-content: center;
+      h3{
+        font-size: 1.5em;
+      }
+      h5{
+        font-size: 0.75em;
+      }
+      hr{
+        width: 30%;
+      }
+    }
+    #video-right--content{
+      .thumbnail-section{
+        .thumbnail-box{
+          width: 100%;
+          height: auto;
+        }
+
+      }
+    }
     #preview--header{
       display: flex;
       justify-content: space-between;
@@ -58,20 +93,11 @@
         background-color: gray;
       }
     }
-    .thumbnail-section{
-      .thumbnail-box{
-        width: 100%;
-        height: auto;
-      }
-
-    }
   }
 
   #side-spacer-right {
     grid-column-end: span 1;
   }
-
-}
 
 textarea {
   border-radius: 2px;

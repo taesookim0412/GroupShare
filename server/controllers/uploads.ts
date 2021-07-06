@@ -7,7 +7,7 @@ const video = mongoose.model("videos");
 
 const multer = require('multer')
 const s3conf = require('./../configs/s3')
-const S3VideoUpload = multer({storage: s3conf.video}).single('video')
+const S3VideoUpload = multer({storage: s3conf.video}).array('files')
 
 //TODO: Add JWT
 //TODO: Add type def for req.file
@@ -15,15 +15,19 @@ export function postVideo(req:express.Request, res:express.Response) {
     S3VideoUpload(req, res, (err: mongoose.CallbackError) => {
         if (err) console.log(err)
         // @ts-ignore
-        if (req.file === undefined) { return res.json(createFailed())}
+        if (req.files === undefined || req.files.length < 3) { return res.json(createFailed())}
+        //files : [gifs, pngs, video]
         const videoPost = {
             author: req.body.author,
             date: Date.now(),
             description: req.body.description,
             likes: 0,
             // @ts-ignore
-            src: req.file['location'],
-            thumbnail: "",
+            src: req.files[2]['location'],
+            // @ts-ignore
+            thumbnailGif: req.files[0]['location'],
+            // @ts-ignore
+            thumbnailPng: req.files[1]['location'],
             title: req.body.title,
             views: 0,
             //TODO: url encoder or index by id

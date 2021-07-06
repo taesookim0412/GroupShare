@@ -22,14 +22,15 @@ export function OneVideo() {
         // }
         dispatch(getOneVideoFromApiAsync(params.id))
     }, [])
-    if (oneVideo.length === 0) {
+    //Severe bug: state :video of type Video. field :video of upload (string) gets pushed into oneVideo (Video).
+    //(Don't tell anyone but there is a severe bug on this page). Redux bug
+    if (oneVideo.length === 0 || (typeof oneVideo[0] === "string")) {
         return (
             <div>
                 Loading...
             </div>
         )
     }
-
     return (
         <div id={"container"}>
             <div id={"onevideocontainer"}>

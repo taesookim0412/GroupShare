@@ -21,11 +21,17 @@ export function Home() {
         history.push(`/watch/${id}`)
     }
 
-    const rows = allVideos.map((video) => {
+    const rows = allVideos?.map((video) => {
         return (
             <div className={"video"} onClick={() => onClickVideo(video._id)}>
-                {/*<img src={video.thumbnail}/>*/}<img
-                src={"https://getuikit.com/v2/docs/images/placeholder_600x400.svg"}/>
+                {/*<img src={video.thumbnail}/>*/}
+                <img src={video.thumbnailPng}
+                     onMouseEnter={(e) => {
+                         e.currentTarget.src=video.thumbnailGif
+                     }}
+                     onMouseLeave={(e) => {
+                         e.currentTarget.src=video.thumbnailPng
+                     }}/>
                 <div>
                     {video.title} <br/>
                     {video.author} <br/>
