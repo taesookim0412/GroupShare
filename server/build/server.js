@@ -31,7 +31,7 @@ var getMainDirectory = function (folderName) {
 app.use(express.static(getMainDirectory("build")));
 app.use(express.static(getMainDirectory("assets")));
 var indexpath = path.resolve(path.join(getMainDirectory("build"), "index.html"));
-// hmmm...
+// TODO: Fix Routing
 // app.get("*", (req, res) => res.sendFile(indexpath))
 getMainDirectory = function () { return ""; };
 require("./configs/mongoose")();

@@ -173,8 +173,8 @@ export function Upload() {
     let videoUploadDiv = <div id={"preview--header"}>
         <div>Preview</div>
         <div>
-            <button onClick={() => {dispatch(setGifsVisibility('1'))}} >Show</button>
-            <button onClick={() => {dispatch(setGifsVisibility('0'))}} >Hide</button>
+            <button onClick={(e) => {e.preventDefault(); dispatch(setGifsVisibility('1'))}} >Show</button>
+            <button onClick={(e) => {e.preventDefault(); dispatch(setGifsVisibility('0'))}} >Hide</button>
         </div>
         <input type={"file"} accept={"video/*"} onChange={handleFile}/>
     </div>
