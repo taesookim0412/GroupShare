@@ -18,6 +18,22 @@ app.use(bodyparser.urlencoded({extended: true}))
 app.use(bodyparser.json())
 
 
+// TODO: Fix Routing
+
+// app.get(/\/[a-z]/, (req, res) =>  {
+//     console.log('catchall')
+//     res.redirect("/")
+// })
+// app.get('*', (req, res) => {
+//     console.log('asd')
+//     res.render(indexpath)
+// })
+
+// app.get("*", (req, res) =>  res.redirect("/"))
+
+require("./configs/mongoose")()
+require("./controllers/routes")(app)
+
 let getMainDirectory = (folderName: string) => {
     const currpath = __dirname.replace(/\\/g, "/")
     const strs = currpath.split("/")
@@ -28,16 +44,10 @@ let getMainDirectory = (folderName: string) => {
         return path.join(__dirname, "..", folderName)
     }
 }
-app.use(express.static(getMainDirectory("build")))
 app.use(express.static(getMainDirectory("assets")))
-const indexpath = path.resolve(path.join(getMainDirectory("build"), "index.html"))
-// TODO: Fix Routing
-
-// app.get("*", (req, res) => res.sendFile(indexpath))
+// app.use(express.static(getMainDirectory("build")))
+app.use('*', express.static(getMainDirectory("build")))
 getMainDirectory = () => ""
-
-require("./configs/mongoose")()
-require("./controllers/routes")(app)
 
 //download as base64 encoded arraybuffer string (351ms, 1.91MB / ~10MB) (Networking VS Performance)
 app.post("/test_file", (req_0, res_0) => {
