@@ -13,29 +13,30 @@ var Success_1 = require("./configs/global/Objects/Success");
 // const multerS3 = require('multer-s3');
 // const aws = require('aws-sdk');
 var cors = require('cors');
+var process = require('process');
 var app = require('express')();
 //goes before multer..
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 var getMainDirectory = function (folderName) {
-    var currpath = __dirname.replace(/\\/g, "/");
+    var currpath = process.cwd().replace(/\\/g, "/");
     var strs = currpath.split("/");
     //Outside of repo directory, into keys directory.
     if (strs.includes("build")) {
-        return path.join(__dirname, "..", "..", folderName);
+        return path.join(process.cwd(), "..", "..", folderName);
     }
     else {
-        return path.join(__dirname, "..", folderName);
+        return path.join(process.cwd(), "..", folderName);
     }
 };
-app.use(express.static(getMainDirectory("build")));
-app.use(express.static(getMainDirectory("assets")));
-var indexpath = path.resolve(path.join(getMainDirectory("build"), "index.html"));
-// TODO: Fix Routing
-// app.get("*", (req, res) => res.sendFile(indexpath))
-getMainDirectory = function () { return ""; };
 require("./configs/mongoose")();
 require("./controllers/routes")(app);
+app.use(express.static(getMainDirectory("build")));
+app.use(express.static(getMainDirectory("assets")));
+// TODO: Fix Routing
+app.use("*", express.static(getMainDirectory("build")));
+// app.get("*", (req, res) => res.sendFile(indexpath))
+getMainDirectory = function () { return ""; };
 //download as base64 encoded arraybuffer string (351ms, 1.91MB / ~10MB) (Networking VS Performance)
 app.post("/test_file", function (req_0, res_0) {
     if (req_0.body.url === undefined || typeof req_0.body.url !== "string")
