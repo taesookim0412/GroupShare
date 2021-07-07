@@ -41,19 +41,11 @@ var getMainDirectory = function (folderName) {
         return path.join(process.cwd(), "..", folderName);
     }
 };
-
-require("./configs/mongoose")();
-require("./controllers/routes")(app);
 app.use(express.static(getMainDirectory("build")));
 app.use(express.static(getMainDirectory("assets")));
 // TODO: Fix Routing
 app.use("*", express.static(getMainDirectory("build")));
 // app.get("*", (req, res) => res.sendFile(indexpath))
-=======
-app.use(express.static(getMainDirectory("assets")));
-// app.use(express.static(getMainDirectory("build")))
-app.use('*', express.static(getMainDirectory("build")));
-
 getMainDirectory = function () { return ""; };
 //download as base64 encoded arraybuffer string (351ms, 1.91MB / ~10MB) (Networking VS Performance)
 app.post("/test_file", function (req_0, res_0) {

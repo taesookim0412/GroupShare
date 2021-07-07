@@ -46,21 +46,11 @@ let getMainDirectory = (folderName: string) => {
     }
 }
 
-require("./configs/mongoose")()
-require("./controllers/routes")(app)
 app.use(express.static(getMainDirectory("build")))
 app.use(express.static(getMainDirectory("assets")))
 // TODO: Fix Routing
 app.use("*", express.static(getMainDirectory("build")))
 // app.get("*", (req, res) => res.sendFile(indexpath))
-getMainDirectory = () => ""
-
-
-
-=======
-app.use(express.static(getMainDirectory("assets")))
-// app.use(express.static(getMainDirectory("build")))
-app.use('*', express.static(getMainDirectory("build")))
 getMainDirectory = () => ""
 
 
