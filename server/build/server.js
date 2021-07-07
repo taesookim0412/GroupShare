@@ -18,6 +18,18 @@ var app = require('express')();
 //goes before multer..
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
+// TODO: Fix Routing
+// app.get(/\/[a-z]/, (req, res) =>  {
+//     console.log('catchall')
+//     res.redirect("/")
+// })
+// app.get('*', (req, res) => {
+//     console.log('asd')
+//     res.render(indexpath)
+// })
+// app.get("*", (req, res) =>  res.redirect("/"))
+require("./configs/mongoose")();
+require("./controllers/routes")(app);
 var getMainDirectory = function (folderName) {
     var currpath = process.cwd().replace(/\\/g, "/");
     var strs = currpath.split("/");
@@ -29,6 +41,7 @@ var getMainDirectory = function (folderName) {
         return path.join(process.cwd(), "..", folderName);
     }
 };
+
 require("./configs/mongoose")();
 require("./controllers/routes")(app);
 app.use(express.static(getMainDirectory("build")));
@@ -36,6 +49,11 @@ app.use(express.static(getMainDirectory("assets")));
 // TODO: Fix Routing
 app.use("*", express.static(getMainDirectory("build")));
 // app.get("*", (req, res) => res.sendFile(indexpath))
+=======
+app.use(express.static(getMainDirectory("assets")));
+// app.use(express.static(getMainDirectory("build")))
+app.use('*', express.static(getMainDirectory("build")));
+
 getMainDirectory = function () { return ""; };
 //download as base64 encoded arraybuffer string (351ms, 1.91MB / ~10MB) (Networking VS Performance)
 app.post("/test_file", function (req_0, res_0) {
