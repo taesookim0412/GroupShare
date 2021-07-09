@@ -96,6 +96,7 @@ export function Upload() {
 
 
     async function handleTestFile(file: string) {
+        dispatch(setStatus("uploading"))
         const videoElement = document.createElement("video")
         videoElement.addEventListener("loadeddata", () => {
             convertToGif(file, videoElement.duration)
@@ -216,7 +217,7 @@ export function Upload() {
                 <div id={"inputs"} className={"inputs"}>
                     <label id={"title"}>
                         Title<br/>
-                        <textarea value={title} onChange={(e) => {
+                        <textarea id={"title__textarea"} value={title} onChange={(e) => {
                             e.preventDefault();
                             dispatch(setTitle(e.target.value))
                         }}/>
@@ -225,7 +226,7 @@ export function Upload() {
 
                     <label>
                         Description<br/>
-                        <textarea value={description} onChange={(e) => {
+                        <textarea id={"description__textarea"} value={description} onChange={(e) => {
                             e.preventDefault();
                             dispatch(setDescription(e.target.value))
                         }} style={{height: "120px"}}/><br/>
