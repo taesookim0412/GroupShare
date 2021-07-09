@@ -59,7 +59,7 @@ export function OneVideo() {
                 </div>
             </div>
             <div id={"sidebar"}>
-                Sidebar...
+
             </div>
 
 

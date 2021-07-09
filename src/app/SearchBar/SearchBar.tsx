@@ -2,6 +2,7 @@ import React, {ChangeEvent, useState} from "react";
 import {useHistory} from "react-router-dom";
 import {useAppDispatch} from "../hooks";
 import {pushSearchClick} from "../Videos/videosSlice";
+import "./SearchBar.scss"
 
 export function SearchBar(){
     const [searchStr, setSearchStr] = useState("")
@@ -20,7 +21,7 @@ export function SearchBar(){
     return (
         <div style={{display: "inline-block", textAlign:"center"}}>
             <form onSubmit={(e) => { e.preventDefault(); onClickButton()}}>
-                <input type={"text"} value={searchStr} onChange={handleChange}/><button>Search</button>
+                <input type={"text"} id={"searchText"} value={searchStr} onChange={handleChange}/><button className={"button__square"} id={"searchButton"}>Search</button>
             </form>
         </div>
     )

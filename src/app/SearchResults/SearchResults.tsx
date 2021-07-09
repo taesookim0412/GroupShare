@@ -52,7 +52,7 @@ export function SearchResults(){
         <div className={"grid"}>
             {/*<div style={{gridColumnEnd: 2}}>*/}
             <div id={"sidebar"}>
-                Sidebar
+
             </div>
             <div id={"searchrows"}>
                 {rows}
