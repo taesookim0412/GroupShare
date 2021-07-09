@@ -21,14 +21,16 @@ const initialState: OneVideoState = {
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const getOneVideoFromApiAsync = createAsyncThunk(
-    'oneVideo/getOneVideoFromApi',
-    async (id:string) => {
-        const response = await getOneVideoFromAPI(id);
-        // // The value we return becomes the `fulfilled` action payload
-        return response.data;
-    }
-);
+
+//this is really bad for reusable components, the state can change while switching views.
+// export const getOneVideoFromApiAsync = createAsyncThunk(
+//     'oneVideo/getOneVideoFromApi',
+//     async (id:string) => {
+//         const response = await getOneVideoFromAPI(id);
+//         // // The value we return becomes the `fulfilled` action payload
+//         return response.data;
+//     }
+// );
 
 export const oneVideoSlice = createSlice({
     name: 'upload',
@@ -39,16 +41,16 @@ export const oneVideoSlice = createSlice({
             state.video[0] = video.payload
         }
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(getOneVideoFromApiAsync.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(getOneVideoFromApiAsync.fulfilled, (state, action) => {
-                state.status = 'idle';
-                state.video = action.payload.videos;
-            })
-    },
+    // extraReducers: (builder) => {
+    //     builder
+    //         .addCase(getOneVideoFromApiAsync.pending, (state) => {
+    //             state.status = 'loading';
+    //         })
+    //         .addCase(getOneVideoFromApiAsync.fulfilled, (state, action) => {
+    //             state.status = 'idle';
+    //             state.video = action.payload.videos;
+    //         })
+    // },
 
     // author: "",
     // description: "",

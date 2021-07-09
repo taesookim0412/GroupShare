@@ -3,13 +3,34 @@
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   grid-gap: 15px;
   #allvideos {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
     grid-column-start: 2;
     grid-column-end: span 7;
+    word-break: break-all;
     .video {
       padding: 20px 0 20px 0;
+      min-height: 281px;
       display: inline-block;
-
+      .video__title{
+        font-size: 1.3em;
+        font-weight: 300;
+        letter-spacing: 0.05em;
+      }
+      .video__author{
+        padding-top:0.02em;
+        font-size: 1.1em;
+        font-weight: 400;
+        letter-spacing: 0.03em;
+      }
+      .video__views{
+        font-weight:200;
+        padding-top: 2.7px;
+        letter-spacing: 0.06em;
+      }
       img {
+        display:block;
+        margin:auto;
         height: 200px;
         max-width: 98%;
       }

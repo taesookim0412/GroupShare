@@ -53,12 +53,17 @@
       justify-content: center;
       h3{
         font-size: 1.5em;
+        text-align: right;
+        letter-spacing: 6px;
       }
       h5{
         font-size: 0.75em;
+        text-align:right;
+        letter-spacing: 4px;
       }
       hr{
-        width: 30%;
+        width: 75%;
+        margin-right: 0;
       }
     }
     #video-right--content{

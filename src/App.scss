@@ -1,13 +1,33 @@
 #App {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Heebo', sans-serif;
   #header{
     display: flex;
     justify-content: space-between;
-    padding: 10px 25px;
+    padding: 5px 25px;
+    text-decoration: none;
     #logo {
       color: #191919;
       font-size: 1.8em;
+      letter-spacing: 0.08em;
+      padding-top: 0.5em;
+      box-sizing: border-box;
     }
+  }
+  .button__square{
+    border-top-left-radius: 3px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.02), 0 6px 6px rgba(0, 0, 0, 0.06);
+    padding-top: 9px;
+    padding-bottom: 8px;
+    background: white;
+    border: 1px solid black;
+    transition: 0.6s;
+    a{
+      color: black !important;
+    }
+  }
+  .button__square:hover{
+    background: #43b5c847;
+
   }
 }
 

@@ -23,19 +23,18 @@ export function Home() {
 
     const rows = allVideos?.map((video) => {
         return (
-            <div className={"video"} onClick={() => onClickVideo(video._id)}>
-                {/*<img src={video.thumbnail}/>*/}
+            <div className={"video"}>
                 <img src={video.thumbnailPng}
                      onMouseEnter={(e) => {
                          e.currentTarget.src=video.thumbnailGif
                      }}
                      onMouseLeave={(e) => {
                          e.currentTarget.src=video.thumbnailPng
-                     }}/>
+                     }} onClick={() => onClickVideo(video._id)} />
                 <div>
-                    {video.title} <br/>
-                    {video.author} <br/>
-                    {video.views} views <br/>
+                    <p className={"video__title"}>{video.title.length > 25 ? `${video.title.slice(0,25)}...` : video.title}</p>
+                    <p className={"video__author"}>{video.author}</p>
+                    <p className={"video__views"}>{video.views} views</p>
                 </div>
             </div>
         )

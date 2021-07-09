@@ -28,11 +28,21 @@ export function SearchResults(){
 
     const rows = allVideos.map((video) => {
         return (
-            <div className={"searchrow"} style={{padding: "20px 0px 20px 0px"}} onClick={() => onClickVideo(video._id)}>
-                {/*<img src={video.thumbnail}/>*/}<img src={"https://getuikit.com/v2/docs/images/placeholder_600x400.svg"}/>
-                <div className={"videoinfo"}>{video.title} <br/>
-                    {video.author} <br/>
-                    {video.views} <br/>
+            <div className={"searchrow"} style={{padding: "20px 0px 20px 0px"}}>
+                {/*<img src={video.thumbnail}/>*/}
+                <div className={"img__container"}>
+                <img src={video.thumbnailPng}
+                     onMouseEnter={(e) => {
+                         e.currentTarget.src=video.thumbnailGif
+                     }}
+                     onMouseLeave={(e) => {
+                         e.currentTarget.src=video.thumbnailPng
+                     }} onClick={() => onClickVideo(video._id)} />
+                </div>
+                <div className={"videoinfo"}>
+                    <p className={"video__title"}>{video.title.length > 50 ? `${video.title.slice(0,25)}...` : video.title}</p>
+                    <p className={"video__author"}>{video.author}</p>
+                    <p className={"video__views"}>{video.views} views</p>
 
                 </div>
             </div>

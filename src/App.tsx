@@ -20,16 +20,19 @@ function App() {
         <div id={"App"}>
             <Router>
                 <div id={"header"}>
-                    <Link style={{display: "inline-block"}} to={"/"}><p
-                        id={"logo"}>GroupShare</p></Link>
-                    <div style={{textAlign: "center", paddingTop: "7px"}}>
+                    <Link style={{display: "inline-block", textDecoration: "none"}} to={"/"}><p
+                        id={"logo"}>GroupShare</p>
+                    </Link>
+                    <div style={{textAlign: "center", paddingTop: "17px"}}>
                         <SearchBar/>
                     </div>
-                    <div style={{paddingTop: "5px"}}>
-                        <Link style={{display: "inline-block", padding: "0 15px 0 15px"}}
-                              to={"/login"}>{useAppSelector(selectLoggedIn) ? "Switch User" : "Login"}</Link>
-                        <Link style={{display: "inline-block", padding: "0 15px 0 15px"}}
-                              to={"/upload"}>Upload</Link>
+                    <div style={{paddingTop: "19px"}}>
+                        <button className={"button__square"} style={{marginRight: "22px"}}><Link
+                            style={{display: "inline-block", padding: "0 15px 0 15px", textDecoration: "none"}}
+                            to={"/login"}>{useAppSelector(selectLoggedIn) ? "Switch User" : "Login"}</Link></button>
+                        <button className={"button__square"}><Link
+                            style={{display: "inline-block", padding: "0 15px 0 15px", textDecoration: "none"}}
+                            to={"/upload"}>Upload</Link></button>
                     </div>
                 </div>
                 <Switch>

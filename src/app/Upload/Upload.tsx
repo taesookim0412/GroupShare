@@ -80,8 +80,9 @@ export function Upload() {
     }
 
     useEffect(() => {
-        if(loggedIn) load();
-    }, [])
+        if (loggedIn) load();
+    },[])
+
     const load = async () => {
         if (!ffmpeg.isLoaded()) {
             await ffmpeg.load();
@@ -93,8 +94,8 @@ export function Upload() {
 
     }
 
+
     async function handleTestFile(file: string) {
-        dispatch(setStatus("uploading"))
         const videoElement = document.createElement("video")
         videoElement.addEventListener("loadeddata", () => {
             convertToGif(file, videoElement.duration)
@@ -102,9 +103,7 @@ export function Upload() {
         videoElement.src = file
         videoElement.load()
         dispatch(setVideo(file))
-
         dispatch(setFilename("Test file.webm"))
-
     }
 
     //One pass for pictures, gif is either multi pass or can't find skip frames for gif fps
@@ -173,8 +172,16 @@ export function Upload() {
     let videoUploadDiv = <div id={"preview--header"}>
         <div>Preview</div>
         <div>
-            <button onClick={(e) => {e.preventDefault(); dispatch(setGifsVisibility('1'))}} >Show</button>
-            <button onClick={(e) => {e.preventDefault(); dispatch(setGifsVisibility('0'))}} >Hide</button>
+            <button onClick={(e) => {
+                e.preventDefault();
+                dispatch(setGifsVisibility('1'))
+            }}>Show
+            </button>
+            <button onClick={(e) => {
+                e.preventDefault();
+                dispatch(setGifsVisibility('0'))
+            }}>Hide
+            </button>
         </div>
         <input type={"file"} accept={"video/*"} onChange={handleFile}/>
     </div>
@@ -228,10 +235,18 @@ export function Upload() {
                         Thumbnail<br/>
                         <div id="thumbnail-box-area">
                             <div className={"thumbnail-section"}>
-                                <img src={thumbnailPngs[0]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailPngsIndex('0'))} style={{opacity: thumbnailPngsIndex === '0' ? '1' : '0.25'}}/>
-                                <img src={thumbnailPngs[1]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailPngsIndex('1'))} style={{opacity: thumbnailPngsIndex === '1' ? '1' : '0.25'}}/>
-                                <img src={thumbnailPngs[2]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailPngsIndex('2'))} style={{opacity: thumbnailPngsIndex === '2' ? '1' : '0.25'}}/>
-                                <img src={thumbnailPngs[3]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailPngsIndex('3'))} style={{opacity: thumbnailPngsIndex === '3' ? '1' : '0.25'}}/>
+                                <img src={thumbnailPngs[0]} className={"thumbnail-box"}
+                                     onClick={() => dispatch(setThumbnailPngsIndex('0'))}
+                                     style={{opacity: thumbnailPngsIndex === '0' ? '1' : '0.25'}}/>
+                                <img src={thumbnailPngs[1]} className={"thumbnail-box"}
+                                     onClick={() => dispatch(setThumbnailPngsIndex('1'))}
+                                     style={{opacity: thumbnailPngsIndex === '1' ? '1' : '0.25'}}/>
+                                <img src={thumbnailPngs[2]} className={"thumbnail-box"}
+                                     onClick={() => dispatch(setThumbnailPngsIndex('2'))}
+                                     style={{opacity: thumbnailPngsIndex === '2' ? '1' : '0.25'}}/>
+                                <img src={thumbnailPngs[3]} className={"thumbnail-box"}
+                                     onClick={() => dispatch(setThumbnailPngsIndex('3'))}
+                                     style={{opacity: thumbnailPngsIndex === '3' ? '1' : '0.25'}}/>
                             </div>
                         </div>
                     </label>
@@ -245,20 +260,31 @@ export function Upload() {
                     {/*correct*/}
                     <div id={"video-right--dialog"}
                          style={{display: status === "uploading" ? "block" : "none", opacity: "uploading" ? '1' : '0'}}>
-                    {/*testing*/}
-                    {/*<div id={"video-right--dialog"}*/}
-                    {/*     style={{display: status === "idle" ? "block" : "none", opacity: "idle" ? 1 : 0}}>*/}
+                        {/*testing*/}
+                        {/*<div id={"video-right--dialog"}*/}
+                        {/*     style={{display: status === "idle" ? "block" : "none", opacity: "idle" ? 1 : 0}}>*/}
                         <h3 style={{paddingTop: "15px"}}>Loading</h3>
                         <hr/>
                         <h5>This may take several seconds.</h5>
                     </div>
                     <div id={"video-right--content"} style={{opacity: status === "idle" ? '1' : '0'}}>
                         {videoUploadDiv}
-                        <div className={"thumbnail-section"} style={{opacity: gifsVisibility, pointerEvents: gifsVisibility === '0' ? 'none': 'unset'}}>
-                            <img src={thumbnailGifs[0]} className={"thumbnail-box"}  onClick={() => dispatch(setThumbnailGifsIndex('0'))} style={{opacity: thumbnailGifsIndex === '0' ? '1' : status === 'idle' ? 0.25 : 0}}/>
-                            <img src={thumbnailGifs[1]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailGifsIndex('1'))} style={{opacity: thumbnailGifsIndex === '1' ? '1' : status === 'idle' ? 0.25 : 0}}/>
-                            <img src={thumbnailGifs[2]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailGifsIndex('2'))} style={{opacity: thumbnailGifsIndex === '2' ? '1' : status === 'idle' ? 0.25 : 0}}/>
-                            <img src={thumbnailGifs[3]} className={"thumbnail-box"} onClick={() => dispatch(setThumbnailGifsIndex('3'))} style={{opacity: thumbnailGifsIndex === '3' ? '1' : status === 'idle' ? 0.25 : 0}}/>
+                        <div className={"thumbnail-section"} style={{
+                            opacity: gifsVisibility,
+                            pointerEvents: gifsVisibility === '0' ? 'none' : 'unset'
+                        }}>
+                            <img src={thumbnailGifs[0]} className={"thumbnail-box"}
+                                 onClick={() => dispatch(setThumbnailGifsIndex('0'))}
+                                 style={{opacity: thumbnailGifsIndex === '0' ? '1' : status === 'idle' ? 0.25 : 0}}/>
+                            <img src={thumbnailGifs[1]} className={"thumbnail-box"}
+                                 onClick={() => dispatch(setThumbnailGifsIndex('1'))}
+                                 style={{opacity: thumbnailGifsIndex === '1' ? '1' : status === 'idle' ? 0.25 : 0}}/>
+                            <img src={thumbnailGifs[2]} className={"thumbnail-box"}
+                                 onClick={() => dispatch(setThumbnailGifsIndex('2'))}
+                                 style={{opacity: thumbnailGifsIndex === '2' ? '1' : status === 'idle' ? 0.25 : 0}}/>
+                            <img src={thumbnailGifs[3]} className={"thumbnail-box"}
+                                 onClick={() => dispatch(setThumbnailGifsIndex('3'))}
+                                 style={{opacity: thumbnailGifsIndex === '3' ? '1' : status === 'idle' ? 0.25 : 0}}/>
                         </div>
                     </div>
                 </div>
