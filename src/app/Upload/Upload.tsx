@@ -80,7 +80,7 @@ export function Upload() {
     }
 
     useEffect(() => {
-        load();
+        if(loggedIn) load();
     }, [])
     const load = async () => {
         if (!ffmpeg.isLoaded()) {
