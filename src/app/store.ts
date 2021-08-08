@@ -13,6 +13,7 @@ export const store = configureStore({
     oneVideo: oneVideoReducer,
     login: loginReducer
   },
+  devTools: false
 });
 
 export type AppDispatch = typeof store.dispatch;

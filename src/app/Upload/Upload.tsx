@@ -88,7 +88,7 @@ export function Upload() {
             await ffmpeg.load();
         }
         // put a video for testing
-        axios.post("/test_file", {url: "https://groupsharetk.s3.us-west-1.amazonaws.com/videos/1625451065385+when+they+call+u+a+good+boi.webm"}).then((file) => {
+        axios.post("/test_file", {url: "https://groupsharetk.s3.us-west-1.amazonaws.com/videos/1625562929792+small_file.mp4"}).then((file) => {
             handleTestFile(file.data.data)
         })
 
@@ -104,7 +104,7 @@ export function Upload() {
         videoElement.src = file
         videoElement.load()
         dispatch(setVideo(file))
-        dispatch(setFilename("Test file.webm"))
+        dispatch(setFilename("Test file.mp4"))
     }
 
     //One pass for pictures, gif is either multi pass or can't find skip frames for gif fps
@@ -264,9 +264,9 @@ export function Upload() {
                         {/*testing*/}
                         {/*<div id={"video-right--dialog"}*/}
                         {/*     style={{display: status === "idle" ? "block" : "none", opacity: "idle" ? 1 : 0}}>*/}
-                        <h3 style={{paddingTop: "15px"}}>Loading</h3>
+                        <h3 style={{paddingTop: "15px"}}>Loading...</h3>
                         <hr/>
-                        <h5>This may take several seconds.</h5>
+                        {/*<h5>This may take several seconds.</h5>*/}
                     </div>
                     <div id={"video-right--content"} style={{opacity: status === "idle" ? '1' : '0'}}>
                         {videoUploadDiv}
