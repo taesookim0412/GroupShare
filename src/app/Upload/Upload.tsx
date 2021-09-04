@@ -30,9 +30,108 @@ import {useHistory} from "react-router-dom";
 import "./Upload.scss"
 import {createFFmpeg, fetchFile} from "@ffmpeg/ffmpeg";
 import axios from "axios";
+import {ThunkDispatch} from "@reduxjs/toolkit";
 
 const ffmpeg = createFFmpeg({log: false});
+async function handleFile(e: ChangeEvent<HTMLInputElement>, dispatch: ThunkDispatch<any, any, any>) {
+    if (e.target.files === null || e.target.files.length < 1) return;
+    const file = e.target.files[0]
+    if (!(file.type.startsWith("video"))) return;
+    dispatch(setStatus("uploading"))
+    const videoElement = document.createElement("video")
+    videoElement.addEventListener("loadeddata", () => {
+        convertToGif(file, videoElement.duration, dispatch)
+    })
+    videoElement.src = URL.createObjectURL(new Blob([file]))
+    videoElement.load()
 
+    const fileReader = new FileReader()
+    fileReader.onload = () => {
+        // const videoElement = document.createElement("video")
+        // videoElement.src = fileReader.result as string
+        // setTimeout(() => console.log(videoElement.duration, 2), 5000 )
+        dispatch(setVideo(fileReader.result as string))
+        dispatch(setFilename(file.name))
+    }
+    fileReader.readAsDataURL(file)
+}
+
+const load = async (dispatch: ThunkDispatch<any, any, any>) => {
+    if (!ffmpeg.isLoaded()) {
+        await ffmpeg.load();
+    }
+    // put a video for testing
+    axios.post("/test_file", {url: "https://groupsharetk.s3.us-west-1.amazonaws.com/videos/1625562929792+small_file.mp4"}).then((file) => {
+        handleTestFile(file.data.data, dispatch)
+    })
+
+}
+
+
+async function handleTestFile(file: string, dispatch: ThunkDispatch<any, any, any>) {
+    dispatch(setStatus("uploading"))
+    const videoElement = document.createElement("video")
+    videoElement.addEventListener("loadeddata", () => {
+        convertToGif(file, videoElement.duration, dispatch)
+    })
+    videoElement.src = file
+    videoElement.load()
+    dispatch(setVideo(file))
+    dispatch(setFilename("Test file.mp4"))
+}
+
+//One pass for pictures, gif is either multi pass or can't find skip frames for gif fps
+const convertToGif = async (file: any, duration: number, dispatch: ThunkDispatch<any, any, any>) => {
+    // Write the file to memory
+    ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
+    // Run the FFMpeg command
+    const num_gifs = 4
+    const gifs = new Array(num_gifs);
+    const pngs = new Array(num_gifs);
+    const interval = duration / (num_gifs + 1)
+    const fps_str = `fps=1/${interval}`
+    await ffmpeg.run('-i', 'video.mp4', '-vf', fps_str, '%d.png')
+    //0
+
+    //10.8
+    pngs[0] = ffmpeg.FS('readFile', '1.png')
+    //21.6
+    pngs[1] = ffmpeg.FS('readFile', '2.png')
+    //32.4
+    pngs[2] = ffmpeg.FS('readFile', '3.png')
+    //44
+    pngs[3] = ffmpeg.FS('readFile', '4.png')
+    //56
+
+    // //4.5s - 5.5s
+    for (let i = 0; i < num_gifs; i++) {
+        const midpoint = duration / (num_gifs + 1) * (i + 1)
+        const start_int = Math.max(0, midpoint - 0.5);
+        const end_int = Math.min(duration, midpoint + 0.5)
+        const start_str = start_int.toString()
+        const gif_name = `${i}.gif`
+        if (start_int + 1 < duration)
+            await ffmpeg.run('-i', 'video.mp4', '-t', '1', '-ss', start_str, '-f', 'gif', gif_name)
+        else
+            await ffmpeg.run('-i', 'video.mp4', '-t', (duration - end_int).toString(), '-ss', start_str, '-f', 'gif', gif_name)
+        gifs[i] = ffmpeg.FS('readFile', gif_name)
+    }
+    // TODO: Combine binary data.
+    // Create a URL
+    const gif_0 = URL.createObjectURL(new Blob([gifs[0].buffer], {type: 'image/gif'}));
+    const gif_1 = URL.createObjectURL(new Blob([gifs[1].buffer], {type: 'image/gif'}));
+    const gif_2 = URL.createObjectURL(new Blob([gifs[2].buffer], {type: 'image/gif'}));
+    const gif_3 = URL.createObjectURL(new Blob([gifs[3].buffer], {type: 'image/gif'}));
+    const png_0 = URL.createObjectURL(new Blob([pngs[0].buffer], {type: 'image/png'}));
+    const png_1 = URL.createObjectURL(new Blob([pngs[1].buffer], {type: 'image/png'}));
+    const png_2 = URL.createObjectURL(new Blob([pngs[2].buffer], {type: 'image/png'}));
+    const png_3 = URL.createObjectURL(new Blob([pngs[3].buffer], {type: 'image/png'}));
+
+    // dispatch(setThumbnailGifs([gif_0, gif_1, gif_2, gif_3]))
+    dispatch(setThumbnailGifs([gif_0, gif_1, gif_2, gif_3]))
+    dispatch(setThumbnailPngs([png_0, png_1, png_2, png_3]))
+    dispatch(setStatus("idle"))
+}
 
 export function Upload() {
     const author = useAppSelector(selectAuthor)
@@ -55,110 +154,11 @@ export function Upload() {
     if (!loggedIn) {
         history.push("/login")
     }
-
-    async function handleFile(e: ChangeEvent<HTMLInputElement>) {
-        if (e.target.files === null || e.target.files.length < 1) return;
-        const file = e.target.files[0]
-        if (!(file.type.startsWith("video"))) return;
-        dispatch(setStatus("uploading"))
-        const videoElement = document.createElement("video")
-        videoElement.addEventListener("loadeddata", () => {
-            convertToGif(file, videoElement.duration)
-        })
-        videoElement.src = URL.createObjectURL(new Blob([file]))
-        videoElement.load()
-
-        const fileReader = new FileReader()
-        fileReader.onload = () => {
-            // const videoElement = document.createElement("video")
-            // videoElement.src = fileReader.result as string
-            // setTimeout(() => console.log(videoElement.duration, 2), 5000 )
-            dispatch(setVideo(fileReader.result as string))
-            dispatch(setFilename(file.name))
-        }
-        fileReader.readAsDataURL(file)
-    }
-
     useEffect(() => {
-        if (loggedIn) load();
+        if (loggedIn) load(dispatch);
     },[])
 
-    const load = async () => {
-        if (!ffmpeg.isLoaded()) {
-            await ffmpeg.load();
-        }
-        // put a video for testing
-        axios.post("/test_file", {url: "https://groupsharetk.s3.us-west-1.amazonaws.com/videos/1625562929792+small_file.mp4"}).then((file) => {
-            handleTestFile(file.data.data)
-        })
 
-    }
-
-
-    async function handleTestFile(file: string) {
-        dispatch(setStatus("uploading"))
-        const videoElement = document.createElement("video")
-        videoElement.addEventListener("loadeddata", () => {
-            convertToGif(file, videoElement.duration)
-        })
-        videoElement.src = file
-        videoElement.load()
-        dispatch(setVideo(file))
-        dispatch(setFilename("Test file.mp4"))
-    }
-
-    //One pass for pictures, gif is either multi pass or can't find skip frames for gif fps
-    const convertToGif = async (file: any, duration: number) => {
-        // Write the file to memory
-        ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
-        // Run the FFMpeg command
-        const num_gifs = 4
-        const gifs = new Array(num_gifs);
-        const pngs = new Array(num_gifs);
-        const interval = duration / (num_gifs + 1)
-        const fps_str = `fps=1/${interval}`
-        await ffmpeg.run('-i', 'video.mp4', '-vf', fps_str, '%d.png')
-        //0
-
-        //10.8
-        pngs[0] = ffmpeg.FS('readFile', '1.png')
-        //21.6
-        pngs[1] = ffmpeg.FS('readFile', '2.png')
-        //32.4
-        pngs[2] = ffmpeg.FS('readFile', '3.png')
-        //44
-        pngs[3] = ffmpeg.FS('readFile', '4.png')
-        //56
-
-        // //4.5s - 5.5s
-        for (let i = 0; i < num_gifs; i++) {
-            const midpoint = duration / (num_gifs + 1) * (i + 1)
-            const start_int = Math.max(0, midpoint - 0.5);
-            const end_int = Math.min(duration, midpoint + 0.5)
-            const start_str = start_int.toString()
-            const gif_name = `${i}.gif`
-            if (start_int + 1 < duration)
-                await ffmpeg.run('-i', 'video.mp4', '-t', '1', '-ss', start_str, '-f', 'gif', gif_name)
-            else
-                await ffmpeg.run('-i', 'video.mp4', '-t', (duration - end_int).toString(), '-ss', start_str, '-f', 'gif', gif_name)
-            gifs[i] = ffmpeg.FS('readFile', gif_name)
-        }
-        // TODO: Combine binary data.
-        // Create a URL
-        const gif_0 = URL.createObjectURL(new Blob([gifs[0].buffer], {type: 'image/gif'}));
-        const gif_1 = URL.createObjectURL(new Blob([gifs[1].buffer], {type: 'image/gif'}));
-        const gif_2 = URL.createObjectURL(new Blob([gifs[2].buffer], {type: 'image/gif'}));
-        const gif_3 = URL.createObjectURL(new Blob([gifs[3].buffer], {type: 'image/gif'}));
-        const png_0 = URL.createObjectURL(new Blob([pngs[0].buffer], {type: 'image/png'}));
-        const png_1 = URL.createObjectURL(new Blob([pngs[1].buffer], {type: 'image/png'}));
-        const png_2 = URL.createObjectURL(new Blob([pngs[2].buffer], {type: 'image/png'}));
-        const png_3 = URL.createObjectURL(new Blob([pngs[3].buffer], {type: 'image/png'}));
-
-        // dispatch(setThumbnailGifs([gif_0, gif_1, gif_2, gif_3]))
-        dispatch(setThumbnailGifs([gif_0, gif_1, gif_2, gif_3]))
-        dispatch(setThumbnailPngs([png_0, png_1, png_2, png_3]))
-        dispatch(setStatus("idle"))
-    }
 
     function postRequest() {
         dispatch(postVideo({
@@ -167,7 +167,9 @@ export function Upload() {
             history: history,
             dispatch: dispatch
         }))
-
+    }
+    function onClickThumbnail(target: EventTarget, idx: string) {
+        dispatch(setThumbnailPngsIndex(idx));
     }
 
     let videoUploadDiv = <div id={"preview--header"}>
@@ -184,7 +186,7 @@ export function Upload() {
             }}>Hide
             </button>
         </div>
-        <input type={"file"} accept={"video/*"} onChange={handleFile}/>
+        <input type={"file"} accept={"video/*"} onChange={(e) => handleFile(e, dispatch)}/>
     </div>
     if (video === "") {
         videoUploadDiv = (
@@ -193,18 +195,13 @@ export function Upload() {
                     Video
                     <div id={"videoprev"} style={{textAlign: "end"}}>
                         {fileName}
-                        <input style={{color: "black"}} accept={"video/*"} type={"file"} onChange={handleFile}/>
+                        <input style={{color: "black"}} accept={"video/*"} type={"file"} onChange={(e) => handleFile(e, dispatch)}/>
                     </div>
                 </label><br/>
             </div>
         )
     }
 
-    function onClickThumbnail(target: EventTarget, idx: string) {
-        dispatch(setThumbnailPngsIndex(idx));
-
-
-    }
 
     return (
         <form onSubmit={(e) => {

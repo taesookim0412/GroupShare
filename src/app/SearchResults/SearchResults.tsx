@@ -8,7 +8,9 @@ import {getSearchVideosFromAPI} from "../Videos/videosApi";
 interface QueryParams {
     query: string
 }
-
+function onClickVideo(id: string, history:any) {
+    history.push(`/watch/${id}`)
+}
 export function SearchResults() {
     const params: QueryParams = useParams()
     const searchParams = decodeURIComponent(params.query)
@@ -22,13 +24,10 @@ export function SearchResults() {
         dispatch(getSearchVideosFromApiAsync(searchParams))
     }, searchHistory)
 
-    function onClickVideo(id: string) {
-        history.push(`/watch/${id}`)
-    }
 
     const rows = allVideos.map((video) => {
         return (
-            <div className={"searchrow"} style={{padding: "20px 0px 20px 0px"}} onClick={() => onClickVideo(video._id)}
+            <div className={"searchrow"} style={{padding: "20px 0px 20px 0px"}} onClick={() => onClickVideo(video._id, history)}
                  onMouseEnter={(e) => {
                      (e.currentTarget.children[0].children[0] as HTMLImageElement).src = video.thumbnailGif
                  }}

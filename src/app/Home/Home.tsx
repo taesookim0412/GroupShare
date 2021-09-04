@@ -7,6 +7,10 @@ import {useHistory} from "react-router-dom";
 import {setVideo} from "../OneVideo/oneVideoSlice";
 import "./Home.scss"
 
+function onClickVideo(id: string, history: any) {
+    history.push(`/watch/${id}`)
+}
+
 export function Home() {
     const dispatch = useAppDispatch()
     const allVideos = useAppSelector(getVideos)
@@ -17,14 +21,12 @@ export function Home() {
         //Shows the format for videos
     }, [])
 
-    function onClickVideo(id: string) {
-        history.push(`/watch/${id}`)
-    }
+
 
     const rows = allVideos?.map((video) => {
         return (
             <div className={"video"}>
-                <div onClick={() => onClickVideo(video._id)}
+                <div onClick={() => onClickVideo(video._id, history)}
                      onMouseEnter={(e) => {
                          (e.currentTarget.children[0] as HTMLImageElement).src=video.thumbnailGif
                 }}
